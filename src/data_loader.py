@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List
+from typing import List, Any, Dict
 from llama_index.core import Document
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.schema import TextNode
@@ -31,6 +31,25 @@ class DataLoader:
         """
         return pd.read_csv(self._input_path)
 
+    def _process_metadata(self, row: pd.Series) -> Dict[str, Any]:
+        """
+        Processes metadata for each row to ensure proper formatting and conversion.
+
+        :param row: pd.Series, the data row from which metadata is extracted and processed.
+        :return: Dict[str, Any], a dictionary containing processed metadata ready for use in creating Document objects.
+        """
+        metadata = {}
+        for col in self._metadata_columns:
+            if col == 'cast' and pd.notnull(row[col]):
+                metadata[col] = row[col].split(',')[:15]
+            elif col == 'release_date' and pd.notnull(row[col]):
+                metadata[col] = pd.to_datetime(row[col]).date()
+            elif col in ['spoken_languages', 'directors', 'genres', 'production_companies'] and pd.notnull(row[col]):
+                metadata[col] = row[col].split(',')
+            else:
+                metadata[col] = row[col]
+        return metadata
+
     def _create_documents(self, data: pd.DataFrame) -> List[Document]:
         """
         Creates a list of Document objects from a DataFrame, intended for internal use only.
@@ -40,8 +59,13 @@ class DataLoader:
         """
         documents = []
         for _, row in data.iterrows():
-            metadata = {col: row[col] for col in self._metadata_columns}
-            document = Document(text=row[self._text_column], metadata=metadata)
+            metadata = self._process_metadata(row)
+            document = Document(
+                text=row[self._text_column],
+                metadata=metadata,
+                metadata_seperator=", ",
+                text_template="Movie Metadata:\n {metadata_str}\n Plot Summary:\n {content}"
+            )
             documents.append(document)
         return documents
 
@@ -68,5 +92,4 @@ class DataLoader:
         documents = self._create_documents(data)
         nodes = self._create_nodes(documents)
         return nodes
-
 
