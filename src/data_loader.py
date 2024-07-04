@@ -42,8 +42,9 @@ class DataLoader:
         for col in self._metadata_columns:
             if col == 'cast' and pd.notnull(row[col]):
                 metadata[col] = row[col].split(',')[:15]
-            elif col == 'release_date' and pd.notnull(row[col]):
-                metadata[col] = pd.to_datetime(row[col]).date()
+            # TODO: date not JSON serializable
+            # elif col == 'release_date' and pd.notnull(row[col]):
+            #     metadata[col] = pd.to_datetime(row[col]).date()
             elif col in ['spoken_languages', 'directors', 'genres', 'production_companies'] and pd.notnull(row[col]):
                 metadata[col] = row[col].split(',')
             else:
