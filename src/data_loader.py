@@ -40,13 +40,19 @@ class DataLoader:
         """
         metadata = {}
         for col in self._metadata_columns:
-            if col == 'cast' and pd.notnull(row[col]):
-                metadata[col] = row[col].split(',')[:15]
+            if col == 'cast':
+                if pd.notnull(row[col]):
+                    metadata[col] = row[col].split(',')[:15]
+                else:
+                    metadata[col] = []
             # TODO: date not JSON serializable
             # elif col == 'release_date' and pd.notnull(row[col]):
             #     metadata[col] = pd.to_datetime(row[col]).date()
-            elif col in ['spoken_languages', 'directors', 'genres', 'production_companies'] and pd.notnull(row[col]):
-                metadata[col] = row[col].split(',')
+            elif col in ['spoken_languages', 'directors', 'genres', 'production_companies']:
+                if pd.notnull(row[col]):
+                    metadata[col] = row[col].split(',')
+                else:
+                    metadata[col] = []
             else:
                 metadata[col] = row[col]
         return metadata
