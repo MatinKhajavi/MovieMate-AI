@@ -51,6 +51,7 @@ class EnhancedQueryEngine(CustomQueryEngine):
 
         self._response_synthesizer = self._get_response_synthesizer()
 
+
     def _get_response_synthesizer(self) -> BaseSynthesizer:
         """
         Initialize and return the response synthesizer with provided prompts.
@@ -66,6 +67,22 @@ class EnhancedQueryEngine(CustomQueryEngine):
             streaming=self._streaming
         )
 
-    def custom_query(self, query_str: str) -> Response:
-        pass
 
+    def custom_query(self, query_str: str) -> Response:
+        """
+        Execute a query using customized methods.
+
+        :param query_str: The query string to process.
+        :type query_str: str
+        :return: The generated response to the query.
+        :rtype: Response
+        """
+        nodes = self._retriever.retrieve(str_or_query_bundle=query_str)
+        
+        return self._response_synthesizer.synthesize(
+            query=query_str,
+            nodes=nodes,
+            llm=self._llm
+        )
+    
+    
