@@ -85,4 +85,7 @@ class EnhancedQueryEngine(CustomQueryEngine):
             llm=self._llm
         )
     
-    
+    # TODO: Implement async version of custom_query method
+    # async def acustom_query(self, query_str: str) -> STR_OR_RESPONSE_TYPE:
+    #     pass
+
