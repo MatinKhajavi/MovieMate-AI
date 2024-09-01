@@ -5,7 +5,6 @@ from llama_index.core.prompts import BasePromptTemplate
 from llama_index.core.llms import LLM
 from llama_index.core import Response
 from llama_index.core.response_synthesizers import get_response_synthesizer, BaseSynthesizer
-from llama_index.core.schema import NodeWithScore
 
 
 class EnhancedQueryEngine(CustomQueryEngine):
