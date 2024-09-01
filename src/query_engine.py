@@ -52,7 +52,19 @@ class EnhancedQueryEngine(CustomQueryEngine):
         self._response_synthesizer = self._get_response_synthesizer()
 
     def _get_response_synthesizer(self) -> BaseSynthesizer:
-        pass
+        """
+        Initialize and return the response synthesizer with provided prompts.
+
+        :return: The configured response synthesizer.
+        :rtype: BaseSynthesizer
+        """
+        return get_response_synthesizer(
+            text_qa_template=self._text_qa_template,
+            refine_template=self._refine_template,
+            summary_template=self._summary_template,
+            response_mode="tree_summarize",
+            streaming=self._streaming
+        )
 
     def custom_query(self, query_str: str) -> Response:
         pass
