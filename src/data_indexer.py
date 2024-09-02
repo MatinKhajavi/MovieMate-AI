@@ -2,7 +2,7 @@ import os
 from typing import List
 from pinecone import Pinecone, Index, ServerlessSpec
 from llama_index.vector_stores.pinecone import PineconeVectorStore
-from llama_index.embeddings import BaseEmbedding
+from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.schema import TextNode
 
 class DataIndexer:
