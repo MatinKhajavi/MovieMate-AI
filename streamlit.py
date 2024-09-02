@@ -41,15 +41,17 @@ def get_app_model():
         streaming=True
     )
     
-    chat_engine = get_chat_engine(
+    return query_engine, llm
+
+
+def create_chat_engine(query_engine, llm):
+    return get_chat_engine(
         chat_mode="openai",
         query_engine=query_engine,
         llm=llm,
         streaming=True
     )
 
-    return chat_engine
-    
 
 class ChatView:
     def __init__(self):
@@ -73,7 +75,7 @@ class ChatView:
 class ChatController:
     def __init__(self):
         self.view = ChatView()
-        self.chat_engine = get_app_model()
+        self.query_engine, self.llm = get_app_model()
         self._initialize_session_state()
 
     def _initialize_session_state(self):
@@ -86,7 +88,7 @@ class ChatController:
             ]
 
         if "chat_engine" not in st.session_state.keys():
-            st.session_state.chat_engine = self.chat_engine
+            st.session_state.chat_engine = create_chat_engine(self.query_engine, self.llm)
 
     def run(self):
         user_input = self.view.get_user_input()
