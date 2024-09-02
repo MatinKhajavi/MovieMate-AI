@@ -1,11 +1,52 @@
 import streamlit as st
+import os
+from llama_index.embeddings.openai import OpenAIEmbedding 
+from llama_index.llms.openai import OpenAI
 from src.chat_engine import get_chat_engine
 from src.query_engine import EnhancedQueryEngine
 from src.pinecone_retriever import PineconeRetriever
-
+from src.data_indexer import DataIndexer
 
 def get_app_model():
-    pass
+    embed_model = OpenAIEmbedding(
+        model="text-embedding-3-large",
+        dimensions=5,
+        api_key=os.environ['OPENAI_API_KEY']
+    )
+    indexer = DataIndexer(
+        dataset_name="movies",
+        embedding_dimension=5,
+        embed_model=embed_model,
+        pinecone_api_key=os.environ['PINECONE_API_KEY']
+    )
+    vector_store = indexer.get_vector_store()
+    
+    retriever = PineconeRetriever(
+        vector_store=vector_store,
+        embed_model=embed_model,
+        query_mode="default",
+        similarity_top_k=10
+    )
+    llm = OpenAI(
+        model="gpt-4o",
+        api_key=os.environ['OPENAI_API_KEY']
+    )
+    
+    query_engine = EnhancedQueryEngine(
+        retriever=retriever,
+        llm=llm,
+        streaming=True
+    )
+        
+    chat_engine = get_chat_engine(
+        chat_mode="condense_question",
+        query_engine=query_engine,
+        llm=llm,
+        streaming=True
+    )
+    
+    return chat_engine
+    
 
 class ChatView:
     def __init__(self):
