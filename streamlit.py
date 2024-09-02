@@ -7,15 +7,17 @@ from src.query_engine import EnhancedQueryEngine
 from src.pinecone_retriever import PineconeRetriever
 from src.data_indexer import DataIndexer
 
+
+@st.cache_resource(show_spinner=False)
 def get_app_model():
     embed_model = OpenAIEmbedding(
         model="text-embedding-3-large",
-        dimensions=5,
+        dimensions=1024,
         api_key=os.environ['OPENAI_API_KEY']
     )
     indexer = DataIndexer(
         dataset_name="movies",
-        embedding_dimension=5,
+        embedding_dimension=1024,
         embed_model=embed_model,
         pinecone_api_key=os.environ['PINECONE_API_KEY']
     )
@@ -25,8 +27,9 @@ def get_app_model():
         vector_store=vector_store,
         embed_model=embed_model,
         query_mode="default",
-        similarity_top_k=10
+        similarity_top_k=15
     )
+    
     llm = OpenAI(
         model="gpt-4o",
         api_key=os.environ['OPENAI_API_KEY']
@@ -37,14 +40,14 @@ def get_app_model():
         llm=llm,
         streaming=True
     )
-        
+    
     chat_engine = get_chat_engine(
         chat_mode="condense_question",
         query_engine=query_engine,
         llm=llm,
         streaming=True
     )
-    
+
     return chat_engine
     
 
