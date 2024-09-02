@@ -2,7 +2,6 @@ from typing import Optional, List, Any
 from llama_index.core.chat_engine.types import ChatMode, BaseChatEngine
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.llms.utils import LLMType
-from llama_index.core.memory import BaseMemory
 from llama_index.core.tools.query_engine import QueryEngineTool
 from llama_index.core import PromptTemplate
 
