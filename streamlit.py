@@ -42,7 +42,7 @@ def get_app_model():
     )
     
     chat_engine = get_chat_engine(
-        chat_mode="condense_question",
+        chat_mode="openai",
         query_engine=query_engine,
         llm=llm,
         streaming=True
