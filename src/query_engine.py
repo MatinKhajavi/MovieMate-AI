@@ -15,40 +15,9 @@ class EnhancedQueryEngine(CustomQueryEngine):
     implementing a custom query method for enhanced control over the RAG process.
     """
 
-    def __init__(
-        self,
-        retriever: BaseRetriever,
-        llm: LLM,
-        text_qa_template: Optional[BasePromptTemplate] = None,
-        refine_template: Optional[BasePromptTemplate] = None,
-        summary_template: Optional[BasePromptTemplate] = None,
-        streaming: bool = False
-    ) -> None:
-        """
-        Initialize the EnhancedQueryEngine.
-
-        :param retriever: The retriever to use for fetching relevant nodes.
-        :type retriever: BaseRetriever
-        :param llm: The language model to use for generating responses.
-        :type llm: LLM
-        :param text_qa_template: Template for text QA, defaults to None
-        :type text_qa_template: Optional[BasePromptTemplate]
-        :param refine_template: Template for refining answers, defaults to None
-        :type refine_template: Optional[BasePromptTemplate]
-        :param summary_template: Template for summarizing, defaults to None
-        :type summary_template: Optional[BasePromptTemplate]
-        :param streaming: Whether to enable streaming of responses, defaults to False
-        :type streaming: bool
-        """
-        super().__init__()
-        self._text_qa_template = text_qa_template
-        self._refine_template = refine_template
-        self._summary_template = summary_template
-        self._retriever = retriever
-        self._llm = llm
-        self._streaming = streaming
-
-        self._response_synthesizer = self._get_response_synthesizer()
+    retriever: BaseRetriever
+    llm: LLM
+    streaming: bool
 
 
     def _get_response_synthesizer(self) -> BaseSynthesizer:
@@ -59,11 +28,9 @@ class EnhancedQueryEngine(CustomQueryEngine):
         :rtype: BaseSynthesizer
         """
         return get_response_synthesizer(
-            text_qa_template=self._text_qa_template,
-            refine_template=self._refine_template,
-            summary_template=self._summary_template,
+            llm=self.llm,
             response_mode="tree_summarize",
-            streaming=self._streaming
+            streaming=self.streaming,
         )
 
 
@@ -76,12 +43,11 @@ class EnhancedQueryEngine(CustomQueryEngine):
         :return: The generated response to the query.
         :rtype: Response
         """
-        nodes = self._retriever.retrieve(str_or_query_bundle=query_str)
-        
-        return self._response_synthesizer.synthesize(
+        nodes = self.retriever.retrieve(str_or_query_bundle=query_str)
+        response_synthesizer = self._get_response_synthesizer()
+        return response_synthesizer.synthesize(
             query=query_str,
             nodes=nodes,
-            llm=self._llm
         )
     
     # TODO: Implement async version of custom_query method
