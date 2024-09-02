@@ -2,3 +2,4 @@ llama-index
 pandas
 pinecone-client
 openai
+llama-index-vector-stores-pinecone
