@@ -6,6 +6,7 @@ MovieMate AI is a cutting-edge chat engine leveraging Large Language Models (LLM
 Whether you're looking for movie recommendations based on specific scenarios, seeking information about directors and actors, or wanting to explore film trivia, MovieMate AI is your knowledgeable companion for all things related to the world of movies.
 
 ### Demo
+Check out the live demo of MovieMate AI at: [https://moviemate-ai.streamlit.app/](https://moviemate-ai.streamlit.app/)
 
 
 ### Key Features
