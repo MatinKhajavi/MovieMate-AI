@@ -1,5 +1,4 @@
-data/TMDB_movie_dataset_v11.csv
 .DS_Store
-data/data.csv
 *.egg-info
 __pycache__/
+data/
