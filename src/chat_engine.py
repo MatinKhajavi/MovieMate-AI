@@ -4,6 +4,28 @@ from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.llms.utils import LLMType
 from llama_index.core.memory import BaseMemory
 from llama_index.core.tools.query_engine import QueryEngineTool
+from llama_index.core import PromptTemplate
+
+
+
+CUSTOM_PROMPT = PromptTemplate(
+    """\
+    Given a conversation about movies (between Human and Assistant) and a follow-up message from Human, \
+    rewrite the message to be a standalone question about movies that captures all relevant context \
+    from the conversation. Include any specific movie titles, genres, actors, directors, or other film-related \
+    details mentioned in the chat history that are relevant to the latest query. Ensure the standalone question \
+    maintains focus on the most recent topic while incorporating pertinent information from earlier in the conversation.
+
+    <Chat History>
+    {chat_history}
+
+    <Follow Up Message>
+    {question}
+
+    <Standalone question>
+    """
+)
+
 
 def get_chat_engine(
     chat_mode: ChatMode,
@@ -47,6 +69,7 @@ def get_chat_engine(
         return CondenseQuestionChatEngine.from_defaults(
             query_engine=query_engine,
             llm=llm,
+            condense_question_prompt=CUSTOM_PROMPT,
             **kwargs
         )
     
