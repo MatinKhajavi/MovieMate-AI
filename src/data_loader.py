@@ -5,7 +5,7 @@ from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.schema import TextNode
 
 class DataLoader:
-    def __init__(self, input_path: str, text_column: str, metadata_columns: List[str], chunk_size: int = 512, chunk_overlap: int = 64):
+    def __init__(self, input_path: str, text_column: str, metadata_columns: List[str], chunk_size: int = 1024, chunk_overlap: int = 64):
         """
         Initializes the DataLoader with path to the CSV, the name of the text column,
         and the list of metadata column names, all treated as private variables. It also initializes
@@ -71,7 +71,7 @@ class DataLoader:
                 text=row[self._text_column],
                 metadata=metadata,
                 metadata_seperator=", ",
-                text_template="Movie Metadata:\n {metadata_str}\n Plot Summary:\n {content}"
+                text_template="Movie Metadata:\n {metadata_str}\n Plot (or Plot Summary):\n {content}"
             )
             documents.append(document)
         return documents
