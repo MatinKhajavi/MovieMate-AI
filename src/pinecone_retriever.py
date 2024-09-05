@@ -76,12 +76,13 @@ class PineconeRetriever(BaseRetriever):
             query_embedding = query_bundle.embedding
 
         vector_store_query = VectorStoreQuery(
+            query_str=query_bundle.query_str,
             query_embedding=query_embedding,
             similarity_top_k=self._similarity_top_k,
             mode=self._query_mode,
         )
 
-        query_result = self._vector_store.query(vector_store_query, pinecone_query_filters=self._filters)
+        query_result = self._vector_store.query(query=vector_store_query, pinecone_query_filters=self._filters)
         nodes_with_scores = [
             NodeWithScore(node=node, score=query_result.similarities[i] if query_result.similarities else None)
             for i, node in enumerate(query_result.nodes)
