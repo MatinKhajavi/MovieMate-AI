@@ -13,13 +13,15 @@ class DataIndexer:
     :param int embedding_dimension: The dimensionality of the embedding space.
     :param BaseEmbedding embed_model: The embedding model to use for generating embeddings.
     :param str pinecone_api_key: API key for accessing Pinecone's vector database services.
+    :param str distance_metric: The distance metric to use for the Pinecone index (default: "euclidean").
     """
     
-    def __init__(self, dataset_name: str, embedding_dimension: int, embed_model: BaseEmbedding, pinecone_api_key: str):
+    def __init__(self, dataset_name: str, embedding_dimension: int, embed_model: BaseEmbedding, pinecone_api_key: str, distance_metric: str = "dotproduct"):
         self.dataset_name = dataset_name
         self.embedding_dimension = embedding_dimension
         self._embed_model = embed_model
         self._pinecone_api_key = pinecone_api_key
+        self._distance_metric = distance_metric
         self._pinecone_client = Pinecone(api_key=self._pinecone_api_key)
         self._pinecone_index = self._setup_or_get_index(self._pinecone_client)
         self._vector_store = PineconeVectorStore(pinecone_index=self._pinecone_index)
@@ -35,7 +37,7 @@ class DataIndexer:
             pc.create_index(
                 name=self.dataset_name,
                 dimension=self.embedding_dimension,
-                metric="euclidean",
+                metric=self._distance_metric,
                 spec=ServerlessSpec(cloud="aws", region="us-east-1"),
             )
         return pc.Index(self.dataset_name)
