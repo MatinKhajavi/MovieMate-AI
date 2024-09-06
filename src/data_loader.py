@@ -95,8 +95,8 @@ class DataLoader:
 
         :return: list of TextNode objects.
         """
-        data = self._load_data()
-        documents = self._create_documents(data)
+        self._df = self._load_data()
+        documents = self._create_documents(self._df)
         nodes = self._create_nodes(documents)
         return nodes
 
